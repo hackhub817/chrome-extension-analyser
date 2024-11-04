@@ -4,7 +4,7 @@
   "version": "1.0",
   "description": "Analyzes website UI/UX and generates HTML reports",
   "permissions": ["activeTab", "scripting", "tabs"],
-  "host_permissions": ["<all_urls>"],
+  "host_permissions": ["<all_urls>", "http://localhost:3000/*"],
   "web_accessible_resources": [
     {
       "resources": ["lib/*", "config.js", "report.html", "images/*"],
