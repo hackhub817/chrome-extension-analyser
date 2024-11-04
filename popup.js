@@ -129,22 +129,40 @@ async function analyzeWebsite(screenshot) {
   try {
     updateUIState("analyzing");
 
-    const response = await fetch("http://localhost:3000/api/analyze", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ screenshot }),
-    });
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 50000); // 50 second timeout
+
+    const response = await fetch(
+      "https://chrome-extension-analyse-api.vercel.app/api/analyze",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({ screenshot }),
+        signal: controller.signal,
+      }
+    );
+
+    clearTimeout(timeoutId);
+
+    const data = await response.json();
 
     if (!response.ok) {
-      const errorData = await response.json();
       throw new Error(
-        `Analysis API Error: ${errorData.error || "Unknown error"}`
+        `Analysis API Error: ${
+          typeof data.error === "object"
+            ? JSON.stringify(data.error)
+            : data.error || "Unknown error"
+        }`
       );
     }
 
-    const data = await response.json();
+    if (!data.businessAnalysis || !data.uiuxAnalysis) {
+      throw new Error("Invalid response format from server");
+    }
+
     updateUIState("complete");
 
     return {
@@ -153,6 +171,12 @@ async function analyzeWebsite(screenshot) {
     };
   } catch (error) {
     console.error("Analysis failed:", error);
+    updateUIState("screenshot"); // Reset UI state on error
+
+    if (error.name === "AbortError") {
+      throw new Error("Analysis request timed out. Please try again.");
+    }
+
     throw error;
   }
 }

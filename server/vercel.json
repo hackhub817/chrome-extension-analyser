@@ -1,14 +1,20 @@
 {
+  "version": 2,
   "builds": [
     {
-      "src": "./server.js",
+      "src": "server.js",
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
-      "src": "/.*",
+      "src": "/(.*)",
       "dest": "server.js"
     }
-  ]
+  ],
+  "functions": {
+    "api/analyze": {
+      "maxDuration": 60
+    }
+  }
 }
