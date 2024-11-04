@@ -1,0 +1,17 @@
+{
+  "manifest_version": 3,
+  "name": "UI/UX Analyzer extension",
+  "version": "1.0",
+  "description": "Analyzes website UI/UX and generates HTML reports",
+  "permissions": ["activeTab", "scripting", "tabs"],
+  "host_permissions": ["<all_urls>"],
+  "web_accessible_resources": [
+    {
+      "resources": ["lib/*", "config.js", "report.html", "images/*"],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  }
+}

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>UI/UX Analyzer</title>
+    <style>
+      body {
+        width: 375px;
+        height: 550px;
+        margin: 0;
+        padding: 16px;
+        border-radius: 16px;
+        font-family: Arial, sans-serif;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .loading-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+      }
+
+      .loading-gif {
+        width: 150px;
+        height: 150px;
+        margin-bottom: 16px;
+      }
+
+      .loading-text {
+        font-size: 16px;
+        color: #333;
+        text-align: center;
+      }
+
+      .screenshot-container {
+        height: 572px;
+        overflow-y: auto;
+        margin: 16px 0;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        display: none;
+      }
+
+      .screenshot-preview {
+        width: 100%;
+        height: auto;
+      }
+
+      .analyzing-container {
+        display: none;
+        text-align: center;
+      }
+
+      .analyzing-gif {
+        width: 300px;
+        height: 60px;
+        border-radius: 8px;
+      }
+
+      .action-button {
+        width: 100%;
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: auto;
+        transition: all 0.3s ease;
+      }
+
+      .action-button:disabled {
+        background-color: #cccccc;
+        cursor: not-allowed;
+      }
+
+      .action-button.analyze {
+        background-color: #4caf50;
+        color: white;
+      }
+
+      .action-button.view-report {
+        background-color: #ff9800;
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="loading-container" id="loadingContainer">
+      <img src="animation.gif" alt="Loading" class="loading-gif" />
+      <p class="loading-text">Having a look at the page. Just a sec</p>
+    </div>
+
+    <div class="screenshot-container" id="screenshotContainer">
+      <img
+        id="screenshotPreview"
+        class="screenshot-preview"
+        alt="Page Screenshot"
+      />
+    </div>
+
+    <div class="analyzing-container" id="analyzingContainer">
+      <img
+        src="Animation-1730726515705.gif"
+        alt="Analyzing"
+        class="analyzing-gif"
+      />
+    </div>
+
+    <button id="actionButton" class="action-button" disabled>Analyze</button>
+
+    <script src="lib/jspdf.umd.min.js"></script>
+    <script src="config.js"></script>
+    <script src="popup.js"></script>
+  </body>
+</html>

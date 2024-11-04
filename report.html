@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Analysis Report</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        display: flex;
+      }
+
+      .report-container {
+        flex: 1;
+        padding: 24px;
+        max-height: 100vh;
+        overflow-y: auto;
+      }
+
+      .screenshot-container {
+        flex: 1;
+        height: 916px;
+        overflow-y: auto;
+        border-left: 1px solid #ddd;
+      }
+
+      .analysis-box {
+        background: #f5f5f5;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 16px;
+      }
+
+      .copy-button {
+        position: fixed;
+        bottom: 24px;
+        left: 24px;
+        padding: 12px 24px;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background-color 0.3s;
+      }
+
+      .copy-button:hover {
+        background-color: #45a049;
+      }
+
+      .screenshot-preview {
+        width: 100%;
+        height: auto;
+      }
+
+      .success-toast {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        padding: 12px 24px;
+        background-color: #4caf50;
+        color: white;
+        border-radius: 8px;
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="report-container">
+      <div class="analysis-box">
+        <h2>Business Goals and Content Analysis</h2>
+        <div id="businessAnalysis"></div>
+      </div>
+
+      <div class="analysis-box">
+        <h2>UI/UX Analysis and Optimizations</h2>
+        <div id="uiuxAnalysis"></div>
+      </div>
+
+      <button id="copyButton" class="copy-button">Copy to Clipboard</button>
+    </div>
+
+    <div class="screenshot-container">
+      <img
+        id="screenshotPreview"
+        class="screenshot-preview"
+        alt="Website Screenshot"
+      />
+    </div>
+
+    <div id="toast" class="success-toast">Copied to clipboard!</div>
+
+    <script>
+      document
+        .getElementById("copyButton")
+        .addEventListener("click", async () => {
+          const businessAnalysis =
+            document.getElementById("businessAnalysis").innerText;
+          const uiuxAnalysis =
+            document.getElementById("uiuxAnalysis").innerText;
+          const fullReport = `Business Goals and Content Analysis\n\n${businessAnalysis}\n\nUI/UX Analysis and Optimizations\n\n${uiuxAnalysis}`;
+
+          try {
+            await navigator.clipboard.writeText(fullReport);
+            const toast = document.getElementById("toast");
+            toast.style.display = "block";
+            setTimeout(() => {
+              toast.style.display = "none";
+            }, 3000);
+          } catch (err) {
+            console.error("Failed to copy:", err);
+          }
+        });
+    </script>
+  </body>
+</html>
