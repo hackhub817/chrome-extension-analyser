@@ -2,19 +2,136 @@
 <html>
   <head>
     <title>Analysis Report</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
     <style>
       body {
         margin: 0;
         padding: 0;
-        font-family: Arial, sans-serif;
+        font-family: "Plus Jakarta Sans", sans-serif;
         display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        border-radius: 26px;
+        background-color: #f5f5f5;
+      }
+
+      .header {
+        padding: 24px;
+        background-color: white;
+        border-bottom: 1px solid #ddd;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .logo-title {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+      }
+
+      .logo {
+        width: 38.97px;
+        height: 32px;
+      }
+
+      .title-container {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .title-container h1 {
+        margin: 0;
+        font-size: 24px;
+        font-weight: 600;
+      }
+
+      .title-container p {
+        margin: 0;
+        color: #666;
+      }
+
+      .credits {
+        text-align: right;
+        font-size: 14px;
+        color: #666;
+      }
+
+      .main-content {
+        display: flex;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 24px;
+        gap: 24px;
+        min-height: calc(100vh - 300px);
       }
 
       .report-container {
         flex: 1;
-        padding: 24px;
-        max-height: 100vh;
+        position: relative;
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        height: 916px;
         overflow-y: auto;
+      }
+
+      .analysis-box {
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 24px;
+        border: 1px solid #333;
+        position: relative;
+      }
+
+      .analysis-box h2 {
+        color: #333;
+        font-size: 24px;
+        font-weight: 600;
+        margin-bottom: 24px;
+      }
+
+      .analysis-content {
+        line-height: 1.8;
+        color: #333;
+        white-space: pre-wrap;
+        font-weight: 400;
+        font-size: 16px;
+        padding-right: 20px;
+      }
+
+      .copy-button {
+        position: sticky;
+        top: 0;
+        float: right;
+        padding: 8px 16px;
+        background-color: white;
+        color: #333;
+        border: 1px solid #333;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 400;
+        transition: all 0.3s ease;
+        z-index: 10;
+        margin-bottom: 20px;
+      }
+
+      .copy-button:hover {
+        background-color: #f5f5f5;
       }
 
       .screenshot-container {
@@ -22,31 +139,8 @@
         height: 916px;
         overflow-y: auto;
         border-left: 1px solid #ddd;
-      }
-
-      .analysis-box {
-        background: #f5f5f5;
-        border-radius: 8px;
-        padding: 20px;
-        margin-bottom: 16px;
-      }
-
-      .copy-button {
-        position: fixed;
-        bottom: 24px;
-        left: 24px;
-        padding: 12px 24px;
-        background-color: #4caf50;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        font-size: 14px;
-        transition: background-color 0.3s;
-      }
-
-      .copy-button:hover {
-        background-color: #45a049;
+        background: white;
+        border-radius: 12px;
       }
 
       .screenshot-preview {
@@ -54,64 +148,152 @@
         height: auto;
       }
 
+      .footer {
+        background: linear-gradient(90deg, #0e0701 0%, #331b05 100%);
+        height: 146px;
+        width: 852px;
+        margin: 24px auto;
+        border-radius: 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 24px;
+        position: relative;
+      }
+
+      .footer-text {
+        color: white;
+        margin: 0;
+        font-weight: 400;
+        font-size: 20px;
+        max-width: 600px;
+      }
+
+      .know-more-btn {
+        background: #4caf50;
+        color: white;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        text-decoration: none;
+        font-weight: 400;
+      }
+
       .success-toast {
         position: fixed;
         bottom: 24px;
         right: 24px;
         padding: 12px 24px;
-        background-color: #4caf50;
+        background-color: #000000;
         color: white;
         border-radius: 8px;
         display: none;
+        animation: fadeIn 0.3s ease;
+        font-size: 14px;
+        font-weight: 500;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Custom scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 4px;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 4px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: #555;
       }
     </style>
   </head>
   <body>
-    <div class="report-container">
-      <div class="analysis-box">
-        <h2>Business Goals and Content Analysis</h2>
-        <div id="businessAnalysis"></div>
+    <div class="header">
+      <div class="header-content">
+        <div class="logo-title">
+          <img src="logo.png" alt="Logo" class="logo" />
+          <div class="title-container">
+            <h1>UI/UX Checker</h1>
+            <p>Real Time Design Analyser for Chrome</p>
+          </div>
+        </div>
+        <div class="credits">
+          Made with
+          <span
+            style="
+              color: #ff0000;
+              display: inline-block;
+              animation: heartbeat 1.5s infinite;
+            "
+          >
+            &#10084;
+          </span>
+          by Kuberanix<br />
+          Powered by GPT-4
+        </div>
       </div>
-
-      <div class="analysis-box">
-        <h2>UI/UX Analysis and Optimizations</h2>
-        <div id="uiuxAnalysis"></div>
-      </div>
-
-      <button id="copyButton" class="copy-button">Copy to Clipboard</button>
     </div>
 
-    <div class="screenshot-container">
-      <img
-        id="screenshotPreview"
-        class="screenshot-preview"
-        alt="Website Screenshot"
-      />
+    <div class="main-content">
+      <div class="report-container">
+        <button
+          class="copy-button"
+          style="position: sticky; top: 0; right: 20px; margin-bottom: 20px"
+        >
+          Copy All to Clipboard
+        </button>
+
+        <div class="analysis-box">
+          <h2>Business Goals and Content Analysis</h2>
+          <div id="businessAnalysis" class="analysis-content"></div>
+        </div>
+
+        <div class="analysis-box">
+          <h2>UI/UX Analysis and Optimizations</h2>
+          <div id="uiuxAnalysis" class="analysis-content"></div>
+        </div>
+      </div>
+
+      <div class="screenshot-container">
+        <img
+          id="screenshotPreview"
+          class="screenshot-preview"
+          alt="Website Screenshot"
+        />
+      </div>
+    </div>
+
+    <div class="footer">
+      <p class="footer-text">
+        Suggestions made sense? Let our super fast and affordable team help you
+        with a revamped design based on this analysis!
+      </p>
+      <a href="https://google.com" target="_blank" class="know-more-btn"
+        >Know More</a
+      >
     </div>
 
     <div id="toast" class="success-toast">Copied to clipboard!</div>
 
-    <script>
-      document
-        .getElementById("copyButton")
-        .addEventListener("click", async () => {
-          const businessAnalysis =
-            document.getElementById("businessAnalysis").innerText;
-          const uiuxAnalysis =
-            document.getElementById("uiuxAnalysis").innerText;
-          const fullReport = `Business Goals and Content Analysis\n\n${businessAnalysis}\n\nUI/UX Analysis and Optimizations\n\n${uiuxAnalysis}`;
-
-          try {
-            await navigator.clipboard.writeText(fullReport);
-            const toast = document.getElementById("toast");
-            toast.style.display = "block";
-            setTimeout(() => {
-              toast.style.display = "none";
-            }, 3000);
-          } catch (err) {
-            console.error("Failed to copy:", err);
-          }
-        });
-    </script>
+    <script src="report.js"></script>
   </body>
 </html>

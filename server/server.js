@@ -34,7 +34,6 @@ app.post("/api/analyze", analyzeContent);
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-
 console.log("Environment variables:", {
   OPENAI_API_KEY: process.env.OPENAI_API_KEY ? "Present" : "Missing",
   PORT: process.env.PORT,

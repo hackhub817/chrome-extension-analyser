@@ -3,15 +3,31 @@
   "name": "UI/UX Analyzer extension",
   "version": "1.0",
   "description": "Analyzes website UI/UX and generates HTML reports",
-  "permissions": ["activeTab", "scripting", "tabs"],
-  "host_permissions": ["<all_urls>", "http://localhost:3000/*"],
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "tabs",
+    "storage",
+    "clipboardWrite"
+  ],
+  "host_permissions": ["<all_urls>"],
   "web_accessible_resources": [
     {
-      "resources": ["lib/*", "config.js", "report.html", "images/*"],
+      "resources": [
+        "lib/*",
+        "config.js",
+        "report.html",
+        "report.js",
+        "images/*",
+        "logo.png"
+      ],
       "matches": ["<all_urls>"]
     }
   ],
   "action": {
     "default_popup": "popup.html"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
   }
 }
