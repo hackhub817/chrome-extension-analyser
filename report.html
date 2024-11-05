@@ -22,9 +22,6 @@
         padding: 24px;
         background-color: white;
         border-bottom: 1px solid #ddd;
-        position: sticky;
-        top: 0;
-        z-index: 100;
       }
 
       .header-content {
@@ -33,12 +30,6 @@
         align-items: flex-start;
         max-width: 1200px;
         margin: 0 auto;
-      }
-
-      .logo-title {
-        display: flex;
-        align-items: center;
-        gap: 24px;
       }
 
       .logo {
@@ -65,8 +56,34 @@
 
       .credits {
         text-align: right;
+        margin-top: 15px;
         font-size: 14px;
         color: #666;
+      }
+
+      .copy-button-wrapper {
+        display: flex;
+        justify-content: flex-end;
+        margin: 10px;
+      }
+
+      .copy-button {
+        display: inline-flex;
+        align-items: center;
+        padding: 8px 16px;
+        background-color: white;
+        color: #333;
+        border: 1px solid #333;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 400;
+        transition: all 0.3s ease;
+        text-align: start;
+      }
+
+      .copy-button:hover {
+        background-color: #f5f5f5;
       }
 
       .main-content {
@@ -83,7 +100,7 @@
         position: relative;
         background: white;
         border-radius: 12px;
-        padding: 20px;
+        padding: 0px 15px;
         height: 916px;
         overflow-y: auto;
       }
@@ -111,27 +128,6 @@
         font-weight: 400;
         font-size: 16px;
         padding-right: 20px;
-      }
-
-      .copy-button {
-        position: sticky;
-        top: 0;
-        float: right;
-        padding: 8px 16px;
-        background-color: white;
-        color: #333;
-        border: 1px solid #333;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 14px;
-        font-weight: 400;
-        transition: all 0.3s ease;
-        z-index: 10;
-        margin-bottom: 20px;
-      }
-
-      .copy-button:hover {
-        background-color: #f5f5f5;
       }
 
       .screenshot-container {
@@ -170,14 +166,20 @@
       }
 
       .know-more-btn {
-        background: #4caf50;
+        background: #ef7f17;
+        width: 150px;
+        height: 40px;
         color: white;
-        padding: 8px 16px;
+        padding: 8px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
         border: none;
         border-radius: 4px;
         cursor: pointer;
         text-decoration: none;
         font-weight: 400;
+        font-size: medium;
       }
 
       .success-toast {
@@ -206,7 +208,6 @@
         }
       }
 
-      /* Custom scrollbar */
       ::-webkit-scrollbar {
         width: 8px;
       }
@@ -255,13 +256,9 @@
 
     <div class="main-content">
       <div class="report-container">
-        <button
-          class="copy-button"
-          style="position: sticky; top: 0; right: 20px; margin-bottom: 20px"
-        >
-          Copy All to Clipboard
-        </button>
-
+        <div class="copy-button-wrapper">
+          <button class="copy-button">Copy All to Clipboard</button>
+        </div>
         <div class="analysis-box">
           <h2>Business Goals and Content Analysis</h2>
           <div id="businessAnalysis" class="analysis-content"></div>
@@ -287,7 +284,7 @@
         Suggestions made sense? Let our super fast and affordable team help you
         with a revamped design based on this analysis!
       </p>
-      <a href="https://google.com" target="_blank" class="know-more-btn"
+      <a href="https://kuberanix.com/" target="_blank" class="know-more-btn"
         >Know More</a
       >
     </div>

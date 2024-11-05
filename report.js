@@ -10,45 +10,36 @@ document.addEventListener("DOMContentLoaded", async () => {
       reportData.uiuxAnalysis;
     document.getElementById("screenshotPreview").src = reportData.screenshot;
 
-    // Add copy functionality to all copy buttons
-    const copyButtons = document.querySelectorAll(".copy-button");
-    copyButtons.forEach((button) => {
-      button.addEventListener("click", async () => {
-        // Get the closest analysis box and its content
-        const analysisBox = button.closest(".analysis-box");
-        const content =
-          analysisBox.querySelector(".analysis-content").textContent;
-        const title = analysisBox.querySelector("h2").textContent;
-
-        const formattedContent = `
-${title}
-----------------------------------------
-${content}`;
-
+    // Add copy functionality
+    document
+      .querySelector(".copy-button")
+      .addEventListener("click", async () => {
         try {
-          await navigator.clipboard.writeText(formattedContent);
-          showToast("Content copied to clipboard!");
+          const businessAnalysis =
+            document.getElementById("businessAnalysis").textContent;
+          const uiuxAnalysis =
+            document.getElementById("uiuxAnalysis").textContent;
+
+          const fullContent = `Business Goals and Content Analysis\n----------------------------------------\n${businessAnalysis}\n\nUI/UX Analysis and Optimizations\n----------------------------------------\n${uiuxAnalysis}`;
+
+          await navigator.clipboard.writeText(fullContent);
+          showToast("Report copied to clipboard!");
         } catch (err) {
-          console.error("Clipboard API failed:", err);
-          // Fallback to execCommand
+          console.error("Copy failed:", err);
+          // Fallback method
           const textarea = document.createElement("textarea");
-          textarea.value = formattedContent;
-          textarea.style.position = "fixed";
-          textarea.style.opacity = "0";
+          textarea.value = fullContent;
           document.body.appendChild(textarea);
           textarea.select();
-
           try {
             document.execCommand("copy");
-            showToast("Content copied to clipboard!");
+            showToast("Report copied to clipboard!");
           } catch (err) {
-            console.error("Copy failed:", err);
             showToast("Failed to copy content");
           }
           document.body.removeChild(textarea);
         }
       });
-    });
   } catch (error) {
     console.error("Error loading report:", error);
   }
