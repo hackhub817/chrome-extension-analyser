@@ -1,6 +1,7 @@
 const OpenAI = require("openai");
 const dotenv = require("dotenv");
 const path = require("path");
+const puppeteer = require("puppeteer");
 
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
@@ -13,6 +14,41 @@ const openai = new OpenAI({
   apiKey: apiKey,
 });
 
+// Add new endpoint for screenshot capture
+exports.captureScreenshot = async (req, res) => {
+  try {
+    const { url } = req.body;
+    if (!url) {
+      return res.status(400).json({ error: "URL is required" });
+    }
+
+    const browser = await puppeteer.launch({
+      headless: "new",
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    });
+
+    const page = await browser.newPage();
+    await page.setViewport({ width: 1920, height: 1080 });
+    await page.goto(url, { waitUntil: "networkidle0" });
+
+    const screenshot = await page.screenshot({
+      encoding: "base64",
+      fullPage: true,
+    });
+
+    await browser.close();
+
+    res.json({
+      success: true,
+      screenshot: screenshot,
+    });
+  } catch (error) {
+    console.error("Screenshot error:", error);
+    res.status(500).json({ error: "Failed to capture screenshot" });
+  }
+};
+
+// Keep existing analyze endpoint unchanged
 exports.analyzeContent = async (req, res) => {
   try {
     if (!req.body.screenshot) {
@@ -23,7 +59,6 @@ exports.analyzeContent = async (req, res) => {
 
     const { screenshot } = req.body;
 
-    // Run both analyses in parallel
     const [businessAnalysisResponse, uiuxAnalysisResponse] = await Promise.all([
       openai.chat.completions.create({
         model: "gpt-4o",

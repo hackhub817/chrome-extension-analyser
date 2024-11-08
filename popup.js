@@ -54,89 +54,19 @@ function updateUIState(state) {
   }
 }
 
-async function captureScreenshot() {
-  try {
-    updateUIState("loading");
-
-    const [tab] = await chrome.tabs.query({
-      active: true,
-      currentWindow: true,
-    });
-
-    if (!tab) {
-      throw new Error("No active tab found");
-    }
-
-    // First inject html2canvas
-    await chrome.scripting.executeScript({
-      target: { tabId: tab.id },
-      files: ["lib/html2canvas.min.js"],
-    });
-
-    // Execute the screenshot capture
-    const result = await chrome.scripting.executeScript({
-      target: { tabId: tab.id },
-      function: () => {
-        return new Promise((resolve, reject) => {
-          if (typeof html2canvas === "undefined") {
-            reject("html2canvas not found");
-            return;
-          }
-
-          const element = document.documentElement;
-          const options = {
-            scale: 1,
-            logging: true,
-            useCORS: true,
-            allowTaint: true,
-            foreignObjectRendering: true,
-            removeContainer: true,
-            backgroundColor: "#ffffff",
-            scrollX: 0,
-            scrollY: -window.scrollY,
-          };
-
-          html2canvas(element, options)
-            .then((canvas) => {
-              try {
-                const dataUrl = canvas.toDataURL("image/png");
-                resolve(dataUrl);
-              } catch (err) {
-                reject("Failed to convert canvas to data URL: " + err);
-              }
-            })
-            .catch((err) => {
-              reject("html2canvas failed: " + err);
-            });
-        });
-      },
-    });
-
-    if (!result || !result[0]) {
-      throw new Error("Screenshot capture failed - no result");
-    }
-
-    screenshot = result[0].result;
-    if (!screenshot) {
-      throw new Error("Screenshot data is empty");
-    }
-
-    // Show the preview
-    const previewImg = document.getElementById("screenshotPreview");
-    previewImg.src = screenshot;
-    updateUIState("screenshot");
-
-    return screenshot;
-  } catch (error) {
-    console.error("Screenshot capture failed:", error);
-    throw error;
-  }
-}
-
-async function analyzeWebsite(screenshot) {
+async function analyzeWebsite(screenshotimg) {
   try {
     updateUIState("analyzing");
 
+    // Get the screenshot from storage
+    const { reportData } = await chrome.storage.local.get("reportData");
+    const screenshot = reportData?.screenshot;
+
+    if (!screenshot) {
+      throw new Error("Screenshot not found");
+    }
+
+    console.log("screenshotimg", screenshot);
     const response = await fetch(
       "https://chrome-extension-analyser.onrender.com/api/analyze",
       {
@@ -150,6 +80,7 @@ async function analyzeWebsite(screenshot) {
     );
 
     const data = await response.json();
+    console.log("data", data);
 
     if (!response.ok) {
       throw new Error(
@@ -161,9 +92,19 @@ async function analyzeWebsite(screenshot) {
       );
     }
 
-    if (!data.businessAnalysis || !data.uiuxAnalysis) {
-      throw new Error("Invalid response format from server");
-    }
+    // Store the complete report data
+    console.log(
+      "businessAnalysis",
+      data.businessAnalysis,
+      "uiuxAnalysis",
+      data.uiuxAnalysis
+    );
+    await chrome.storage.local.set({
+      reportData: {
+        businessAnalysis: data.businessAnalysis,
+        uiuxAnalysis: data.uiuxAnalysis,
+      },
+    });
 
     updateUIState("complete");
 
@@ -173,14 +114,13 @@ async function analyzeWebsite(screenshot) {
     };
   } catch (error) {
     console.error("Analysis failed:", error);
-    updateUIState("screenshot"); // Reset UI state on error
+    updateUIState("screenshot");
     throw error;
   }
 }
 
 async function displayReport(data) {
   try {
-    // Store the data in chrome.storage
     await chrome.storage.local.set({
       reportData: {
         businessAnalysis: data.businessAnalysis,
@@ -189,7 +129,6 @@ async function displayReport(data) {
       },
     });
 
-    // Open report.html in a new tab
     chrome.tabs.create({ url: chrome.runtime.getURL("report.html") });
   } catch (error) {
     console.error("Error creating report:", error);
@@ -197,31 +136,125 @@ async function displayReport(data) {
   }
 }
 
-document.addEventListener("DOMContentLoaded", async () => {
-  console.log("Popup initialized");
-
+async function captureScreenshot() {
   try {
-    await captureScreenshot();
+    console.log("captureScreenshot function called");
+    updateUIState("capturing");
+
+    const [tab] = await chrome.tabs.query({
+      active: true,
+      currentWindow: true,
+    });
+    console.log("Current tab:", tab);
+
+    if (!tab || !tab.url) {
+      throw new Error("No active tab found");
+    }
+
+    const serverUrl = "http://localhost:3000/api/screenshot";
+    console.log("Sending request to:", serverUrl);
+
+    const response = await fetch(serverUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ url: tab.url }),
+    });
+
+    console.log("Response status:", response.status);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Screenshot failed: ${errorText}`);
+    }
+
+    const data = await response.json();
+    console.log("Screenshot data received");
+    const screenshot = `data:image/png;base64,${data.screenshot}`;
+    // Store the screenshot
+    await chrome.storage.local.set({
+      reportData: {
+        screenshot: screenshot,
+      },
+    });
+
+    // Update UI
+    const screenshotPreview = document.getElementById("screenshotPreview");
+    if (screenshotPreview) {
+      screenshotPreview.src = screenshot;
+      screenshotPreview.style.display = "block";
+    }
+
+    updateUIState("screenshot");
+    return screenshot;
   } catch (error) {
-    console.error("Initial screenshot failed:", error);
+    console.error("Screenshot capture failed:", error);
+    updateUIState("error");
+    showError(`Screenshot failed: ${error.message}`);
+    throw error;
   }
+}
+
+function showError(message) {
+  console.error("Error:", message);
+  const errorElement = document.getElementById("error-message");
+  if (errorElement) {
+    errorElement.textContent = message;
+    errorElement.style.display = "block";
+    setTimeout(() => {
+      errorElement.style.display = "none";
+    }, 5000);
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  console.log("DOM Content Loaded");
 
   const actionButton = document.getElementById("actionButton");
+  if (!actionButton) {
+    console.error("Action button not found!");
+    return;
+  }
+
+  console.log("Action button found");
+
   actionButton.addEventListener("click", async () => {
+    console.log("Action button clicked");
+
     try {
       const buttonText = actionButton.querySelector(".button-text");
+      if (!buttonText) {
+        console.error("Button text element not found");
+        return;
+      }
+
+      console.log("Current button text:", buttonText.textContent);
+
       if (buttonText.textContent === "Analyze") {
-        analysis = await analyzeWebsite(screenshot);
+        console.log("Starting screenshot capture...");
+        const screenshot = await captureScreenshot();
+
+        if (screenshot) {
+          console.log("Screenshot captured, starting analysis...");
+          const analysis = await analyzeWebsite(screenshot);
+          if (analysis) {
+            updateUIState("complete");
+          }
+        }
       } else if (buttonText.textContent === "View Report") {
-        await displayReport(analysis);
+        await chrome.tabs.create({ url: "report.html" });
       }
     } catch (error) {
       console.error("Process failed:", error);
+      showError("Failed to process the website");
     }
   });
 
-  // Add close button handler
-  document.getElementById("closeButton").addEventListener("click", () => {
-    window.close();
-  });
+  const closeButton = document.getElementById("closeButton");
+  if (closeButton) {
+    closeButton.addEventListener("click", () => {
+      window.close();
+    });
+  }
 });

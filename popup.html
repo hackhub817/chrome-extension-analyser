@@ -1,195 +1,28 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>UI/UX Analyzer</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <style>
-      body {
-        width: 375px;
-        height: 570px;
-        margin: 0;
-        padding: 16px;
-        border-radius: 26px;
-        font-family: "Plus Jakarta Sans", sans-serif;
-        display: flex;
-        flex-direction: column;
-        background-color: white;
-        color: #333;
-      }
-
-      .header {
-        display: flex;
-        align-items: center;
-        margin-bottom: 8px;
-      }
-
-      .logo {
-        width: 38.97px;
-        height: 32px;
-        margin-right: 12px;
-      }
-
-      .title-container {
-        display: flex;
-        flex-direction: column;
-      }
-
-      .title {
-        font-size: 20px;
-        font-weight: 600;
-        margin: 0;
-        color: #333;
-      }
-
-      .subtitle {
-        font-size: 14px;
-        color: #666;
-        margin: 4px 0 0 0;
-        font-weight: 400;
-      }
-
-      .close-button {
-        position: absolute;
-        top: 16px;
-        right: 16px;
-        background: none;
-        border: none;
-        color: #333;
-        font-size: 20px;
-        cursor: pointer;
-        padding: 4px;
-        font-family: "Plus Jakarta Sans", sans-serif;
-      }
-
-      .loading-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        height: 100%;
-      }
-
-      .loading-gif {
-        width: 150px;
-        height: 150px;
-        margin-bottom: 16px;
-      }
-
-      .loading-text {
-        font-size: 16px;
-        color: #333;
-        text-align: center;
-        font-weight: 400;
-      }
-
-      .screenshot-container {
-        height: 572px;
-        overflow-y: auto;
-        margin: 16px 0;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        display: none;
-      }
-
-      .screenshot-preview {
-        width: 100%;
-        height: auto;
-      }
-
-      .analyzing-container {
-        display: none;
-        text-align: center;
-      }
-
-      .analyzing-gif {
-        width: 24px;
-        height: 24px;
-        display: none;
-        color: black;
-      }
-
-      .analyzing .analyzing-gif {
-        display: inline-block;
-      }
-
-      .action-button {
-        width: 100%;
-        padding: 12px;
-        border: none;
-        border-radius: 8px;
-        font-size: 16px;
-        font-weight: 400;
-        cursor: pointer;
-        margin-top: auto;
-        transition: all 0.3s ease;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-        background-color: #000000;
-        color: white;
-        font-family: "Plus Jakarta Sans", sans-serif;
-      }
-
-      .action-button:disabled {
-        background-color: #bbb4b4;
-        cursor: not-allowed;
-        opacity: 1;
-      }
-
-      .action-button.analyze {
-        background-color: #000000;
-        color: white;
-      }
-
-      .action-button.analyzing {
-        background-color: #000000;
-        color: white;
-      }
-
-      .action-button.view-report {
-        background-color: #ef7f17;
-        color: white;
-      }
-
-      .button-text {
-        font-weight: 400;
-      }
-    </style>
+    <title>Website Analyzer</title>
+    <link rel="stylesheet" href="popup.css" />
   </head>
   <body>
-    <button class="close-button" id="closeButton">&times;</button>
-    <img src="logo.png" alt="Logo" class="logo" />
-    <div class="header">
-      <div class="title-container">
-        <h1 class="title">UI/UX Checker</h1>
-        <p class="subtitle">Real Time Design Analyser for Chrome</p>
+    <div class="container">
+      <div id="error-message" style="display: none; color: red"></div>
+
+      <button id="actionButton" class="button">
+        <span class="button-text">Analyze</span>
+        <div class="spinner" style="display: none"></div>
+      </button>
+
+      <div class="screenshot-container">
+        <img
+          id="screenshotPreview"
+          alt="Website Screenshot"
+          style="max-width: 100%; display: none"
+        />
       </div>
+
+      <button id="closeButton" class="close-button">Close</button>
     </div>
-
-    <div class="loading-container" id="loadingContainer">
-      <img src="animation.gif" alt="Loading" class="loading-gif" />
-      <p class="loading-text">Having a look at the page. Just a sec</p>
-    </div>
-
-    <div class="screenshot-container" id="screenshotContainer">
-      <img
-        id="screenshotPreview"
-        class="screenshot-preview"
-        alt="Page Screenshot"
-      />
-    </div>
-
-    <button id="actionButton" class="action-button" disabled>
-      <span class="button-text">Analyze</span>
-      <img src="load.gif" alt="Analyzing" class="analyzing-gif" />
-    </button>
-
-    <script src="lib/jspdf.umd.min.js"></script>
-    <script src="config.js"></script>
     <script src="popup.js"></script>
   </body>
 </html>

@@ -1,16 +1,10 @@
 {
   "manifest_version": 3,
-  "name": "UI/UX Analyzer extension",
+  "name": "UI UX Analyzer extension",
   "version": "1.0",
   "description": "Analyzes website UI/UX and generates HTML reports",
-  "permissions": [
-    "activeTab",
-    "scripting",
-    "tabs",
-    "storage",
-    "clipboardWrite"
-  ],
-  "host_permissions": ["<all_urls>"],
+  "permissions": ["activeTab", "storage", "scripting", "tabs"],
+  "host_permissions": ["https://chrome-extension-analyser.onrender.com/*"],
   "web_accessible_resources": [
     {
       "resources": [
@@ -25,8 +19,10 @@
     }
   ],
   "action": {
-    "default_popup": "popup.html"
+    "default_popup": "popup.html",
+    "default_icon": "startinglogo.png"
   },
+  "icons": { "128": "startinglogo.png" },
   "content_security_policy": {
     "extension_pages": "script-src 'self'; object-src 'self'"
   }
